@@ -1,7 +1,7 @@
-const Filter = ({ filter, eventHandler }) => {
+const Filter = ({ filter, search }) => {
   return (
     <div>
-      filter shown with <input value={filter} onChange={eventHandler} />
+      filter shown with <input value={filter} onChange={search} />
     </div>
   );
 };

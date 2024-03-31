@@ -1,10 +1,17 @@
 import Person from "./Person";
-const Persons = ({ persons, nameFilter, deleteContact }) => {
+const Persons = ({ persons, filter }) => {
   console.log(persons);
   return (
     <div>
       <ul>
         {persons
+          .filter((person) =>
+            person?.name.toLowerCase().includes(filter.toLowerCase())
+          )
+          .map((p) => (
+            <Person key={p.name} name={p.name} number={p.number} />
+          ))}
+        {/* {persons
           .filter((p) =>
             p.name.toLowerCase().startsWith(nameFilter.toLowerCase())
           )
@@ -16,9 +23,8 @@ const Persons = ({ persons, nameFilter, deleteContact }) => {
               number={person.number}
               //deleteContact={deleteContact}
               //person={person}
-              //deletePerson={deletePerson}
             />
-          ))}
+          ))} */}
       </ul>
     </div>
   );
