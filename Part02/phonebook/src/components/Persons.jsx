@@ -1,15 +1,21 @@
 import Person from "./Person";
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, deletePerson }) => {
   console.log(persons);
   return (
     <div>
       <ul>
         {persons
           .filter((person) =>
-            person?.name.toLowerCase().includes(filter.toLowerCase())
+            person.name.toLowerCase().includes(filter.toLowerCase())
           )
           .map((p) => (
-            <Person key={p.name} name={p.name} number={p.number} />
+            <Person
+              key={p.name}
+              id={p.id}
+              name={p.name}
+              number={p.number}
+              deletePerson={deletePerson}
+            />
           ))}
         {/* {persons
           .filter((p) =>
