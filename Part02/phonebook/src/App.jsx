@@ -4,12 +4,13 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personService from "./services/phoneBook";
-import axios from "axios";
+import Notification from "./components/Notification";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((returnedPerson) => {
@@ -44,27 +45,30 @@ const App = () => {
                 p.id === personwithNewNumber.id ? changedPerson : p
               )
             );
+            setErrorMessage(`${personwithNewNumber.name} was updated`);
+          })
+          .catch((error) => {
+            setErrorMessage(
+              `${personwithNewNumber.name} is already been removed from the phonebook`
+            );
+            setPersons(persons.filter((p) => p.id !== personwithNewNumber.id));
+            console.log(error);
           });
       }
+    } else {
+      personService
+        .addNew(personObj)
+        .then((returnedPerson) => {
+          setPersons(persons.concat(returnedPerson));
+          setErrorMessage(`Added ${personObj.name} to the phonebook`);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 3000);
     }
-
-    // Sending data to the server
-
-    axios.post("http://localhost:3001/persons", personObj).then((response) => {
-      setPersons(persons.concat(response.data));
-      setNewName("");
-      setNewNumber("");
-    });
-
-    // To add only unique names in the phonebook
-    // const uniqueName = persons.some(
-    //   (person) => person.name.toLowerCase() === newName.toLowerCase()
-    // );
-    // if (uniqueName) {
-    //   alert(`${newName} is already added to phonebook`);
-    // } else {
-    //   setPersons(persons.concat(personObj));
-    // }
   };
   // To delete a contact from the phonebook
   const deleteContact = (id) => {
@@ -76,7 +80,7 @@ const App = () => {
     }
   };
 
-  // To save the changes in the input field as user types
+  // To save the changes in the input field as user types mo 686789878
   const handleNameChange = (e) => {
     setNewName(e.target.value);
   };
@@ -90,7 +94,7 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
-
+      <Notification message={errorMessage} />
       <Filter filter={filter} search={handleFilterChange} />
 
       <PersonForm
@@ -102,17 +106,6 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      {/* <ul>
-        {persons
-          .filter((person) =>
-            person.name.toLowerCase().includes(filter.toLowerCase())
-          )
-          .map((p) => (
-            <li key={p.name}>
-              {p.name}:{p.number}
-            </li>
-          ))}
-      </ul> */}
       <Persons persons={persons} filter={filter} deletePerson={deleteContact} />
     </>
   );
