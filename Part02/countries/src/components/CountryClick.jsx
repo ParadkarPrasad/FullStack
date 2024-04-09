@@ -1,16 +1,13 @@
-const CountryClick = ({ countryShow, showCountry }) => {
+const CountryClick = ({ showCountry, countryShow }) => {
+  console.log(showCountry);
   return (
     <>
-      {countryShow.map((nation) => {
-        <div key={nation.numericCode}>
-          {nation.name}
-          <button
-            type="button"
-            value={nation.name}
-            onClick={showCountry}
-          ></button>
-        </div>;
-      })}
+      {countryShow.map((country) => (
+        <div key={country.name}>
+          <p>{country.name}</p>
+          <button onClick={() => showCountry(country.name.common)}>Show</button>
+        </div>
+      ))}
     </>
   );
 };

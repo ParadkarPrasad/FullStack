@@ -10,22 +10,22 @@ const App = () => {
       setCountries(res.data);
     });
   }, []);
-
-  // console.log(countriesToShow);
+  if (!countries) {
+    return null;
+  }
   const handleCountryChange = (e) => {
     setSearchName(e.target.value);
   };
-  const showCountry = (event) => {
-    event.preventDefault();
-    setSearchName(event.target.value);
+  const showCountry = (country) => {
+    // event.preventDefault();
+    //setSearchName(event.target.value);
+
+    setSearchName(country.name.common);
   };
-  const countriesToShow = countries.filter((country) => {
-    country.name.toLowerCase().includes(searchName.toLowerCase());
-  });
-  console.log(countriesToShow);
-  if (!countriesToShow) {
-    return null;
-  }
+  const countriesToShow = countries.filter((country) =>
+    country.name.toLowerCase().includes(searchName.toLowerCase())
+  );
+
   return (
     <>
       find countries:{" "}
