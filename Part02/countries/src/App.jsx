@@ -6,9 +6,11 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchName, setSearchName] = useState("");
   useEffect(() => {
-    axios.get("https://restcountries.com/v2/all").then((res) => {
-      setCountries(res.data);
-    });
+    axios
+      .get("https://studies.cs.helsinki.fi/restcountries/api/all")
+      .then((res) => {
+        setCountries(res.data);
+      });
   }, []);
   if (!countries) {
     return null;
@@ -16,14 +18,9 @@ const App = () => {
   const handleCountryChange = (e) => {
     setSearchName(e.target.value);
   };
-  const showCountry = (country) => {
-    // event.preventDefault();
-    //setSearchName(event.target.value);
 
-    setSearchName(country.name.common);
-  };
   const countriesToShow = countries.filter((country) =>
-    country.name.toLowerCase().includes(searchName.toLowerCase())
+    country.name.common.toLowerCase().includes(searchName.toLowerCase())
   );
 
   return (
@@ -33,7 +30,7 @@ const App = () => {
       <Countries
         country={searchName}
         countryShow={countriesToShow}
-        showCountry={showCountry}
+        showCountry={setSearchName}
       />
     </>
   );
