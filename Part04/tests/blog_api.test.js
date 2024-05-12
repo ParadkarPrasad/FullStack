@@ -1,6 +1,8 @@
 const {test, after, beforeEach, describe }= require('node:test')
+const bcrypt = require('bcrypt')
 const assert = require('node:assert')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
@@ -9,13 +11,9 @@ const api = supertest(app)
 
 beforeEach(async()=>{
   await Blog.deleteMany({})
-  let blogObject = new Blog(helper.initialBlogs[0])
-  await blogObject.save()
-
-  blogObject = new Blog(helper.initialBlogs[1])
-  await blogObject.save()
- 
-})
+  const blogObjects = helper.initialBlogs.map(blog => new Blog(blog))
+  const promiseArray = blogObjects.map(blog=> blog.save())
+  await Promise.all(promiseArray)
 
 describe('4.8 GET request', ()=>{
 
@@ -111,6 +109,7 @@ describe('4.13 deleting a single blog post', ()=> {
   })
 })
 describe('4.14 Modify Blog', ()=>{
+
   test('Update a blog', async()=>{
     const blogAtStart = await helper.BlogsInDb()
     const blogtoUpdate = {...blogAtStart[0], likes:15}
@@ -120,11 +119,42 @@ describe('4.14 Modify Blog', ()=>{
     .send(blogtoUpdate)
     .expect(200)
 
-     const blogAfterModify = await helper.BlogsInDb()
+    const blogAfterModify = await helper.BlogsInDb()
     const modifiedBlog = blogAfterModify.find(blog=> blog.id === blogtoUpdate.id)
     assert.strictEqual(blogAfterModify[0].likes, 15)
    
+    })
   })
+})
+
+describe('Users for testing', ()=>{
+
+  beforeEach(async()=>{
+    await User.deleteMany({})
+  
+    const passwordHash = await bcrypt.hash('sekret',10)
+    const user = new User({username: 'root', password:passwordHash})
+    await user.save()
+  })
+  
+  test('invalid users are not created', async()=>{
+    const user = new User({
+      username: "He",
+      name: "John",
+      password: "password123"
+    })
+
+    const usersAtStart = await helper.usersInDb()
+    await api
+    .post('/api/users')
+    .send(user)
+    .expect(400)
+    .expect("Content-Type", /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length , usersAtStart.length)
+  })
+
 })
 after(async()=>{
   await mongoose.connection.close()
