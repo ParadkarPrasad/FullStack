@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
     author: String,
     url: String,
     likes: Number,
-    users:[
+    user:[
       {
         type: mongoose.Schema.Types.ObjectId,
 		    ref: "User",
