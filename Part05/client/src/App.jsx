@@ -68,6 +68,32 @@ const handleCreate = async (blogObject)=>{
     console.log(error)
   }
 }
+
+// Update a Blog 
+  const updateBlog = async (blogObject)=>{
+    try{
+      const updatedBlog = await blogService.update(blogObject.id, blogObject)
+      const newBlog = blogs.map((blog)=> blog.id === updatedBlog.id?  updatedBlog : blog)
+      setBlogs(newBlog)
+      setSuccessMessage(`Blog ${updatedBlog.title} by ${updatedBlog.author} updated`)
+      // setTimeout(()=>{
+      //   setSuccessMessage(null)
+      // },3000)
+    }catch(error){
+      console.log(error)
+    }
+  }
+  // Delete Blog
+  const deleteBlog = async(blogObject)=>{
+    try{
+       await blogService.deleteBlog(blogObject)
+      const newBlog = blogs.filter((blog)=>blog.id !== blogObject)
+      setBlogs(newBlog)
+      setSuccessMessage(`Blog ${blogObject.title} by ${blogObject.author} deleted`)
+    }catch(error){
+      console.log(error)
+    }
+  }
   const loginForm = ()=> (
   <form onSubmit={handleLogin}>
   <h1>Login into application</h1>
@@ -96,8 +122,8 @@ const handleCreate = async (blogObject)=>{
   <Toggable buttonLabel="new note" ref={blogFormRef}>
       <BlogForm saveBlog={handleCreate}/>
   </Toggable>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a,b)=>b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} username={user.username} updateLikes={updateBlog} deleteBlog={deleteBlog}/>
       )}
     </div>
     )}
