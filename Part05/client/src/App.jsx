@@ -56,7 +56,7 @@ const App = () => {
       blogFormRef.current.toggleVisibility()
       const newBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat(newBlog))
-      setSuccessMessage(`A new blog ${newBlog.title} by ${newBlog.author} added`)
+      setSuccessMessage('created')
       const getBlogs = await blogService.getAll()
       setBlogs(getBlogs)
       setTimeout(() => {
@@ -82,11 +82,15 @@ const App = () => {
     }
   }
   // Delete Blog
-  const deleteBlog = async(blogObject)  =>  {
+  const deleteBlog = async(id)  =>  {
     try{
-      await blogService.deleteBlog(blogObject)
-      const newBlog = blogs.filter((blog) => blog.id !== blogObject)
+      await blogService.deleteBlog(id)
+      const newBlog = blogs.filter((blog) => blog.id !== id)
+      // console.log(newBlog)
       setBlogs(newBlog)
+      // console.log(blogs)
+      const getBlogs = await blogService.getAll()
+      setBlogs(getBlogs)
       // setSuccessMessage(`Blog ${newBlog.title} by ${newBlog.author} deleted`)
     }catch(error){
       console.log(error)
@@ -98,11 +102,11 @@ const App = () => {
       <p>{errorMessage}</p>
       <div>
     username
-        <input type="text" value={username} name="username" onChange={({ target }) => setUsername(target.value)}/>
+        <input type="text" data-testid="username" value={username} name="username" onChange={({ target }) => setUsername(target.value)}/>
       </div>
       <div>
     password
-        <input type="password" value={password} name="password" onChange={({ target }) => setPassword(target.value)}/>
+        <input type="password" data-testid="password" value={password} name="password" onChange={({ target }) => setPassword(target.value)}/>
       </div>
       <button type="submit">login</button>
     </form>

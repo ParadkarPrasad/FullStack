@@ -20,7 +20,7 @@ const Blog = ({ blog, updateLikes, username, deleteBlog }) => {
   }
 
   const handleDelete= () => {
-    if(window.confirm(`Remove blog ${blog.title} by ${blog.author}`)){
+    if(window.confirm('Are you sure you want to delete this blog?')){
       deleteBlog(blog.id)
     }
   }
@@ -44,11 +44,11 @@ const Blog = ({ blog, updateLikes, username, deleteBlog }) => {
 
           <span>{blog.user.name}</span>
 
-          {blog.user.username === username && (
-            <div>
-              <button onClick={handleDelete}>remove</button>
-            </div>
-          )}
+          {/* {blog.user.username === username && ( */}
+          <div>
+            <button onClick={handleDelete}>remove</button>
+          </div>
+          {/* )} */}
         </div>
       ) }
     </div>

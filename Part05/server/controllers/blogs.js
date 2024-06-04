@@ -17,7 +17,7 @@ blogRouter.get('/',async (req,res) => {
     res.json(blogs);
   })
 
-  blogRouter.post('/', middleware.userExtractor, async (request,response ,next)=> {
+  blogRouter.post('/', middleware.userExtractor, async (request, response ,next)=> {
     const body = request.body
     const user = request.user
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
@@ -29,7 +29,7 @@ blogRouter.get('/',async (req,res) => {
   
     // const user = await User.findById(decodedToken.id)
     if(!body.title || !body.url){
-      return res.status(400).end()
+      return response.status(400).end()
     }
     const blog = new Blog({
       title: body.title,
